@@ -25,3 +25,6 @@ runtime/
 # OS General
 Thumbs.db
 .DS_Store
+
+/*.yaml
+/example/http/z
