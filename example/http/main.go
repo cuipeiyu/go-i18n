@@ -11,6 +11,8 @@ import (
 
 func main() {
 	bundle := i18n.NewBundle(language.English)
+	bundle.LoadMessageFile("locales/en-US.yaml")
+	bundle.LoadMessageFile("locales/zh-CN.yaml")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		lang := r.FormValue("lang")

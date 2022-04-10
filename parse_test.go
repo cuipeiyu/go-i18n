@@ -6,17 +6,15 @@ import (
 	"testing"
 
 	"golang.org/x/text/language"
-	yaml "gopkg.in/yaml.v2"
 )
 
 func TestParseMessageFileBytes(t *testing.T) {
 	testCases := []struct {
-		name           string
-		file           string
-		path           string
-		unmarshalFuncs map[string]UnmarshalFunc
-		messageFile    *MessageFile
-		err            error
+		name        string
+		file        string
+		path        string
+		messageFile *MessageFile
+		err         error
 	}{
 		{
 			name: "basic test",
@@ -144,8 +142,7 @@ func TestParseMessageFileBytes(t *testing.T) {
 outer:
     nested:
         inner: "value"`,
-			path:           "en.yaml",
-			unmarshalFuncs: map[string]UnmarshalFunc{"yaml": yaml.Unmarshal},
+			path: "en.yaml",
 			messageFile: &MessageFile{
 				Path:   "en.yaml",
 				Tag:    language.English,
@@ -159,7 +156,7 @@ outer:
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			actual, err := ParseMessageFileBytes([]byte(testCase.file), testCase.path, testCase.unmarshalFuncs)
+			actual, err := ParseMessageFileBytes([]byte(testCase.file), testCase.path)
 			if (err == nil && testCase.err != nil) ||
 				(err != nil && testCase.err == nil) ||
 				(err != nil && testCase.err != nil && err.Error() != testCase.err.Error()) {

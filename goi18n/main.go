@@ -2,17 +2,66 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/cuipeiyu/go-i18n"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 const configFileName = ".goi18n.yaml"
 const configFileType = "yaml"
+
+type M map[string]i18n.Message
+
+func (m M) write2File(path, source string) error {
+	dir := filepath.Dir(path)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		_ = os.MkdirAll(dir, os.ModeDir|os.ModePerm)
+	}
+
+	t := make(map[string]map[string]string)
+	for k, v := range m {
+		// log.Println(source, k, v.Hash, v.Other)
+		// v.Hash = hash(v)
+		kv := make(map[string]string)
+		switch source {
+		case "original", "target":
+			kv["hash"] = v.Hash
+		}
+		if v.Zero != "" {
+			kv["zero"] = v.Zero
+		}
+		if v.One != "" {
+			kv["one"] = v.One
+		}
+		if v.Two != "" {
+			kv["two"] = v.Two
+		}
+		if v.Few != "" {
+			kv["few"] = v.Few
+		}
+		if v.Many != "" {
+			kv["many"] = v.Many
+		}
+		if v.Other != "" {
+			kv["other"] = v.Other
+		}
+		t[k] = kv
+	}
+
+	out, err := yaml.Marshal(t)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(path, out, os.ModePerm)
+}
 
 func init() {
 	logrus.SetLevel(logrus.TraceLevel)
@@ -66,7 +115,7 @@ func main() {
 			Short:            "遍历项目文件夹找出翻译语句",
 			Long:             "",
 			TraverseChildren: true,
-			Args:             cobra.MinimumNArgs(1), // 至少需要1个参数
+			// Args:             cobra.MinimumNArgs(1), // 至少需要1个参数
 			Run: func(cmd *cobra.Command, args []string) {
 				merge()
 			},

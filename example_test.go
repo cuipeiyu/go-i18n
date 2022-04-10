@@ -3,7 +3,6 @@ package i18n_test
 import (
 	"fmt"
 
-	"github.com/BurntSushi/toml"
 	"github.com/cuipeiyu/go-i18n"
 	"golang.org/x/text/language"
 )
@@ -23,12 +22,11 @@ func ExampleLocalizer_MustLocalize() {
 
 func ExampleLocalizer_MustLocalize_noDefaultMessage() {
 	bundle := i18n.NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.MustParseMessageFileBytes([]byte(`
-HelloWorld = "Hello World!"
+HelloWorld: "Hello World!"
 `), "en.toml")
 	bundle.MustParseMessageFileBytes([]byte(`
-HelloWorld = "Hola Mundo!"
+HelloWorld: "Hola Mundo!"
 `), "es.toml")
 
 	{

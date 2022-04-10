@@ -5,9 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/BurntSushi/toml"
 	"golang.org/x/text/language"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var simpleMessage = MustNewMessage(map[string]string{
@@ -34,11 +32,10 @@ var everythingMessage = MustNewMessage(map[string]string{
 
 func TestConcurrentAccess(t *testing.T) {
 	bundle := NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.MustParseMessageFileBytes([]byte(`
 # Comment
-hello = "world"
-`), "en.toml")
+hello: "world"
+`), "en.yaml")
 
 	count := 10
 	errch := make(chan error, count)
@@ -62,12 +59,11 @@ hello = "world"
 
 func TestPseudoLanguage(t *testing.T) {
 	bundle := NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	expected := "nuqneH"
 	bundle.MustParseMessageFileBytes([]byte(`
 # Comment
-hello = "`+expected+`"
-`), "art-x-klingon.toml")
+hello: "`+expected+`"
+`), "art-x-klingon.yaml")
 	{
 		localized, err := NewLocalizer(bundle, "art-x-klingon").Localize(&LocalizeConfig{MessageID: "hello"})
 		if err != nil {
@@ -124,14 +120,13 @@ func TestJSON(t *testing.T) {
 
 func TestYAML(t *testing.T) {
 	bundle := NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
 	bundle.MustParseMessageFileBytes([]byte(`
 # Comment
 simple: simple translation
 
 # Comment
 detail:
-  description: detail description 
+  description: detail description
   other: detail translation
 
 # Comment
@@ -144,34 +139,6 @@ everything:
   many: many translation
   other: other translation
 `), "en-US.yaml")
-
-	expectMessage(t, bundle, language.AmericanEnglish, "simple", simpleMessage)
-	expectMessage(t, bundle, language.AmericanEnglish, "detail", detailMessage)
-	expectMessage(t, bundle, language.AmericanEnglish, "everything", everythingMessage)
-}
-
-func TestTOML(t *testing.T) {
-	bundle := NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	bundle.MustParseMessageFileBytes([]byte(`
-# Comment
-simple = "simple translation"
-
-# Comment
-[detail]
-description = "detail description"
-other = "detail translation"
-
-# Comment
-[everything]
-description = "everything description"
-zero = "zero translation"
-one = "one translation"
-two = "two translation"
-few = "few translation"
-many = "many translation"
-other = "other translation"
-`), "en-US.toml")
 
 	expectMessage(t, bundle, language.AmericanEnglish, "simple", simpleMessage)
 	expectMessage(t, bundle, language.AmericanEnglish, "detail", detailMessage)

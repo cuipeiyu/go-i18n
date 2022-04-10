@@ -10,7 +10,7 @@ import (
 )
 
 // UnmarshalFunc unmarshals data into v.
-type UnmarshalFunc func(data []byte, v interface{}) error
+// type UnmarshalFunc func(data []byte, v interface{}) error
 
 // Bundle stores a set of messages and pluralization rules.
 // Most applications only need a single bundle
@@ -18,8 +18,8 @@ type UnmarshalFunc func(data []byte, v interface{}) error
 // It is not goroutine safe to modify the bundle while Localizers
 // are reading from it.
 type Bundle struct {
-	defaultLanguage  language.Tag
-	unmarshalFuncs   map[string]UnmarshalFunc
+	defaultLanguage language.Tag
+	// unmarshalFuncs   map[string]UnmarshalFunc
 	messageTemplates map[language.Tag]map[string]*MessageTemplate
 	pluralRules      plural.Rules
 	tags             []language.Tag
@@ -42,12 +42,12 @@ func NewBundle(defaultLanguage language.Tag) *Bundle {
 }
 
 // RegisterUnmarshalFunc registers an UnmarshalFunc for format.
-func (b *Bundle) RegisterUnmarshalFunc(format string, unmarshalFunc UnmarshalFunc) {
-	if b.unmarshalFuncs == nil {
-		b.unmarshalFuncs = make(map[string]UnmarshalFunc)
-	}
-	b.unmarshalFuncs[format] = unmarshalFunc
-}
+// func (b *Bundle) RegisterUnmarshalFunc(format string, unmarshalFunc UnmarshalFunc) {
+// 	if b.unmarshalFuncs == nil {
+// 		b.unmarshalFuncs = make(map[string]UnmarshalFunc)
+// 	}
+// 	b.unmarshalFuncs[format] = unmarshalFunc
+// }
 
 // LoadMessageFile loads the bytes from path
 // and then calls ParseMessageFileBytes.
@@ -73,7 +73,7 @@ func (b *Bundle) MustLoadMessageFile(path string) {
 //
 // The language tag of the file is everything after the second to last "." or after the last path separator, but before the format.
 func (b *Bundle) ParseMessageFileBytes(buf []byte, path string) (*MessageFile, error) {
-	messageFile, err := ParseMessageFileBytes(buf, path, b.unmarshalFuncs)
+	messageFile, err := ParseMessageFileBytes(buf, path)
 	if err != nil {
 		return nil, err
 	}

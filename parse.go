@@ -1,12 +1,12 @@
 package i18n
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 
 	"golang.org/x/text/language"
+	"gopkg.in/yaml.v2"
 )
 
 // MessageFile represents a parsed message file.
@@ -18,7 +18,7 @@ type MessageFile struct {
 }
 
 // ParseMessageFileBytes returns the messages parsed from file.
-func ParseMessageFileBytes(buf []byte, path string, unmarshalFuncs map[string]UnmarshalFunc) (*MessageFile, error) {
+func ParseMessageFileBytes(buf []byte, path string) (*MessageFile, error) {
 	lang, format := parsePath(path)
 	tag := language.Make(lang)
 	messageFile := &MessageFile{
@@ -26,20 +26,14 @@ func ParseMessageFileBytes(buf []byte, path string, unmarshalFuncs map[string]Un
 		Tag:    tag,
 		Format: format,
 	}
+
 	if len(buf) == 0 {
 		return messageFile, nil
 	}
-	unmarshalFunc := unmarshalFuncs[messageFile.Format]
-	if unmarshalFunc == nil {
-		if messageFile.Format == "json" {
-			unmarshalFunc = json.Unmarshal
-		} else {
-			return nil, fmt.Errorf("no unmarshaler registered for %s", messageFile.Format)
-		}
-	}
+
 	var err error
 	var raw interface{}
-	if err = unmarshalFunc(buf, &raw); err != nil {
+	if err = yaml.Unmarshal(buf, &raw); err != nil {
 		return nil, err
 	}
 
