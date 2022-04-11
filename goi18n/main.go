@@ -14,9 +14,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const configFileName = ".goi18n.yaml"
-const configFileType = "yaml"
-
 type M map[string]i18n.Message
 
 func (m M) write2File(path, source string) error {
@@ -65,8 +62,6 @@ func (m M) write2File(path, source string) error {
 
 func init() {
 	logrus.SetLevel(logrus.TraceLevel)
-
-	cobra.OnInitialize(readConfigFile)
 }
 
 func main() {
@@ -135,44 +130,6 @@ func main() {
 	}
 
 	// writeConfigFile()
-}
-
-// 从 .goi18n.yaml 文件 读取配置
-func readConfigFile() {
-	gomod := getGoEnv("GOMOD")
-	if gomod == "" {
-		return
-	}
-	workspace := filepath.Dir(gomod)
-
-	// 读取配置
-	viper.AddConfigPath(workspace)
-	viper.SetConfigFile(configFileName)
-	viper.SetConfigType(configFileType)
-
-	// 忽略错误
-	_ = viper.ReadInConfig()
-}
-
-// 在 go mod 模式的项目下 自动生成 .goi18n.yaml 文件
-func writeConfigFile() {
-	gomod := getGoEnv("GOMOD")
-	if gomod == "" {
-		return
-	}
-	workspace := filepath.Dir(gomod)
-
-	// 创建配置文件（使用默认配置）
-	tmp := viper.New()
-	tmp.AddConfigPath(workspace)
-	tmp.SetConfigFile(configFileName)
-	tmp.SetConfigType(configFileType)
-	tmp.Set("default", viper.Get("default"))
-	tmp.Set("target", viper.GetStringSlice("target"))
-	err := tmp.WriteConfig()
-	if err != nil {
-		logrus.Errorln(err)
-	}
 }
 
 var goEnvCache = make(map[string]string)
