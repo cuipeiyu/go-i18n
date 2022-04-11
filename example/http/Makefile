@@ -8,6 +8,6 @@ trans:
 	goi18n walk
 	goi18n merge -t zh-CN
 
-.PHONY: run
-run:
+.PHONY: dev
+dev:
 	go run main.go

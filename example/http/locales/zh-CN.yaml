@@ -1,3 +1,11 @@
 HelloPerson:
   hash: 5b49bfdad81fedaeefb224b0ffc2acc58b09cff5
   other: 你好 {{.Name}}
+MyUnreadEmails:
+  hash: 4b090d27137a0eeaaaa2465114ffba700b4f841f
+  one: 我有一条未读邮件
+  other: 我有{{.PluralCount}}条未读邮件
+PersonUnreadEmails:
+  hash: f500811edca1d6fd6472f670bb79f4fa5934789a
+  one: '{{.Name}}有一条未读邮件'
+  other: '{{.Name}}有{{.UnreadEmailCount}}条未读邮件'

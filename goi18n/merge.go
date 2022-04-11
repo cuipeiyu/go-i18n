@@ -206,6 +206,7 @@ func diff(originalMap, middleMap, targetMap M) (M, M, M) {
 					targetMapResult[id] = tar // 不变
 				} else {
 					// 视为内容是被正确翻译的
+					targetMapResult[id] = tar // 不变
 				}
 			} else { // 内容不同
 				tar.Hash = org.Hash

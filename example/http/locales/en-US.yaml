@@ -1,3 +1,11 @@
 HelloPerson:
   hash: 5b49bfdad81fedaeefb224b0ffc2acc58b09cff5
   other: Hello {{.Name}}
+MyUnreadEmails:
+  hash: 4b090d27137a0eeaaaa2465114ffba700b4f841f
+  one: I have {{.PluralCount}} unread email.
+  other: I have {{.PluralCount}} unread emails.
+PersonUnreadEmails:
+  hash: f500811edca1d6fd6472f670bb79f4fa5934789a
+  one: '{{.Name}} has {{.UnreadEmailCount}} unread email.'
+  other: '{{.Name}} has {{.UnreadEmailCount}} unread emails.'
