@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"golang.org/x/text/language"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // MessageFile represents a parsed message file.

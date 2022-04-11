@@ -11,7 +11,7 @@ import (
 	"github.com/cuipeiyu/go-i18n"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func merge() {
