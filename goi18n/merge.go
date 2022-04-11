@@ -33,7 +33,6 @@ func merge() {
 }
 
 func mergeLang(original, target string) {
-	// logrus.Debugf("%s => %s", source, target)
 	outdir := viper.GetString("outdir")
 	workspace := filepath.Dir(getGoEnv("GOMOD"))
 
@@ -47,14 +46,11 @@ func mergeLang(original, target string) {
 			logrus.Errorf("来源文件不存在")
 			return
 		}
-		// logrus.Debugf("读取文件 %s 内容", filename)
 		buf, err := ioutil.ReadFile(filename)
 		if err != nil {
 			logrus.Fatalf("读取文件失败: %v", err)
 		}
 
-		// var list []i18n.Message
-		// logrus.Debugf("序列化文件 %s 内容", filename)
 		err = yaml.Unmarshal(buf, &originalMap)
 		if err != nil {
 			logrus.Fatalf("无法识别的文件: %v", err)
@@ -67,14 +63,11 @@ func mergeLang(original, target string) {
 	}
 	{
 		filename := filepath.Join(workspace, outdir, target+".todo.yaml")
-		// logrus.Debugf("中间文件 %s", filename)
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			// logrus.Debugf("中间文件不存在")
 		} else {
-			// logrus.Debugf("读取文件 %s 内容", filename)
 			buf, err := ioutil.ReadFile(filename)
 			if err == nil {
-				// logrus.Debugf("序列化文件 %s 内容", filename)
 				err = yaml.Unmarshal(buf, &middleMap)
 				if err != nil {
 					logrus.Fatalf("无法识别的文件: %v", err)
@@ -84,17 +77,14 @@ func mergeLang(original, target string) {
 	}
 	{
 		filename := filepath.Join(workspace, outdir, target+".yaml")
-		// logrus.Debugf("目标文件 %s", filename)
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			// logrus.Debugf("目标文件不存在")
 		} else {
-			// logrus.Debugf("读取文件 %s 内容", filename)
 			buf, err := ioutil.ReadFile(filename)
 			if err != nil {
 				logrus.Fatalf("读取文件失败: %v", err)
 			}
 
-			// logrus.Debugf("序列化文件 %s 内容", filename)
 			err = yaml.Unmarshal(buf, &targetMap)
 			if err != nil {
 				logrus.Fatalf("无法识别的文件: %v", err)
@@ -103,7 +93,6 @@ func mergeLang(original, target string) {
 	}
 
 	// 比对文件
-	// logrus.Debugf("比对文件")
 
 	originalMapResult, middleMapResult, targetMapResult := diff(originalMap, middleMap, targetMap)
 
@@ -184,11 +173,9 @@ func diff(originalMap, middleMap, targetMap M) (M, M, M) {
 		}
 		// 情景 2
 		if midHas && !tarHas {
-			// logrus.Debugf("情景2")
 			h1 := hash(org)
 			h2 := hash(mid)
 			if h1 == h2 {
-				// org.Hash = h1
 				middleMapResult[id] = org // 保留
 				targetMapResult[id] = org // 复制
 			} else {
@@ -198,8 +185,6 @@ func diff(originalMap, middleMap, targetMap M) (M, M, M) {
 		}
 		// 情景 3
 		if !midHas && tarHas {
-			// logrus.Debugf("情景3")
-
 			if org.Hash == tar.Hash { // 若相同
 				if org.Hash == hash(tar) { // 内容一至，表示没翻译
 					middleMapResult[id] = org // 需要翻译
@@ -216,7 +201,6 @@ func diff(originalMap, middleMap, targetMap M) (M, M, M) {
 		}
 		// 情景 4
 		if midHas && tarHas {
-			// logrus.Debugf("情景4")
 			h1 := hash(mid)
 			h2 := hash(tar)
 			if org.Hash == tar.Hash { // 正常的翻译

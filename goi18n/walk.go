@@ -16,9 +16,6 @@ import (
 
 // 遍历项目文件夹找出代码片段
 func walk() {
-	// fmt.Println("Print: " + strings.Join(args, " "))
-	// log.Println("AllSettings", viper.AllSettings())
-
 	logrus.Debugf("开始遍历文件夹")
 
 	workspace := filepath.Dir(getGoEnv("GOMOD"))
@@ -31,6 +28,8 @@ func walk() {
 			workspace,
 		}
 	}
+
+	total := 0
 
 	messages := []*i18n.Message{}
 	for _, path := range paths {
@@ -51,7 +50,7 @@ func walk() {
 				return nil
 			}
 
-			logrus.Debugf("处理文件 %s", path)
+			total++
 
 			buf, err := ioutil.ReadFile(path)
 			if err != nil {
@@ -68,18 +67,12 @@ func walk() {
 		}
 	}
 
-	// messageTemplates := MTemplate{}
-	// for _, m := range messages {
-	// 	if mt := i18n.NewMessageTemplate(m); mt != nil {
-	// 		messageTemplates[m.ID] = mt
-	// 	}
-	// }
-
 	if messages == nil {
 		logrus.Infof("无匹配数据")
 		return
 	}
 
+	logrus.Debugf("处理 %d 文件", total)
 	logrus.Debugf("找到 %d 条", len(messages))
 
 	messageMap := make(M, len(messages))
@@ -95,25 +88,6 @@ func walk() {
 		logrus.Errorln(err)
 		return
 	}
-
-	// buf, err := yaml.Marshal(messageMap)
-	// if err != nil {
-	// 	logrus.Errorln(err)
-	// 	return
-	// }
-
-	// // log.Println(viper.AllSettings())
-
-	// outdir := filepath.Join(workspace, viper.GetString("outdir"))
-	// _ = os.MkdirAll(outdir, os.ModeDir|os.ModePerm)
-
-	// filename := filepath.Join(outdir, viper.GetString("default")+".yaml")
-	// // log.Println("-----", outdir, filename)
-	// err = ioutil.WriteFile(filename, buf, os.ModePerm)
-	// if err != nil {
-	// 	logrus.Errorln(err)
-	// 	return
-	// }
 }
 
 // extractMessages extracts messages from the bytes of a Go source file.
